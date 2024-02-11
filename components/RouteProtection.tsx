@@ -8,7 +8,7 @@ export function withPublic(Component) {
     const router = useRouter();
 
     if (user) {
-      router.replace("/posts/1");
+      router.replace("/dashboard");
       return <div>Loading</div>;
     }
     if (user === undefined) {
