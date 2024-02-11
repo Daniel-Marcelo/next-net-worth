@@ -14,6 +14,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { x } from "@xstyled/styled-components";
+import { useRouter } from "next/router";
+import { Route } from "../../const/routes.constants";
 
 const ToolbarButton = ({
   item,
@@ -42,9 +44,10 @@ interface Props {
 }
 
 const drawerWidth = 240;
-const navItems = ["Home"];
+const navItems = [{ item: "Dashboard", route: Route.Dashboard }];
 
 export function DrawerAppBar(props: Props) {
+  const router = useRouter();
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -59,8 +62,8 @@ export function DrawerAppBar(props: Props) {
       </Typography>
       <Divider />
       <List>
-        {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
+        {navItems.map(({ item, route }) => (
+          <ListItem key={route} disablePadding>
             <ListItemButton sx={{ textAlign: "center" }}>
               <ListItemText primary={item} />
             </ListItemButton>
@@ -95,8 +98,8 @@ export function DrawerAppBar(props: Props) {
             Next Net Worth
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "flex" } }}>
-            {navItems.map((item) => (
-              <ToolbarButton item={item} selected={false} />
+            {navItems.map(({ item, route }) => (
+              <ToolbarButton item={item} selected={router.pathname === route} />
             ))}
           </Box>
         </Toolbar>
