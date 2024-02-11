@@ -5,12 +5,14 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
+import { DrawerAppBar } from "../components/NavBar";
 
 const queryClient = new QueryClient();
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AuthContextProvider>
       <QueryClientProvider client={queryClient}>
+        <DrawerAppBar />
         <Component {...pageProps} />
       </QueryClientProvider>
     </AuthContextProvider>
