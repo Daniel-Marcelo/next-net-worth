@@ -16,6 +16,10 @@ import Button from "@mui/material/Button";
 import { x } from "@xstyled/styled-components";
 import { useRouter } from "next/router";
 import { Route } from "../../const/routes.constants";
+import LogoutIcon from "@mui/icons-material/Logout";
+import axios from "axios";
+import { useLogout } from "../../hooks/useAuth";
+import { useAuthContext } from "../../context/AuthContext";
 
 const ToolbarButton = ({
   item,
@@ -47,6 +51,8 @@ const drawerWidth = 240;
 const navItems = [{ item: "Dashboard", route: Route.Dashboard }];
 
 export function DrawerAppBar(props: Props) {
+  const user = useAuthContext();
+  const logout = useLogout();
   const router = useRouter();
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -58,7 +64,7 @@ export function DrawerAppBar(props: Props) {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        Next Net Worth
+        Next Net Worthss
       </Typography>
       <Divider />
       <List>
@@ -93,15 +99,22 @@ export function DrawerAppBar(props: Props) {
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            sx={{ flexGrow: 1, display: { xs: "block" } }}
           >
             Next Net Worth
           </Typography>
-          <Box sx={{ display: { xs: "none", sm: "flex" } }}>
+          <Box sx={{ display: { xs: "none" } }}>
             {navItems.map(({ item, route }) => (
               <ToolbarButton item={item} selected={router.pathname === route} />
             ))}
           </Box>
+          {user && (
+            <LogoutIcon
+              sx={{ ml: 2, cursor: "pointer" }}
+              fontSize="small"
+              onClick={() => logout.mutate()}
+            />
+          )}
         </Toolbar>
       </AppBar>
       <nav>
