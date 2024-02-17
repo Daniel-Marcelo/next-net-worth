@@ -22,15 +22,13 @@ import { useLogout } from "../../hooks/useAuth";
 import { useAuthContext } from "../../context/AuthContext";
 
 const ToolbarButton = ({
-  item,
   selected,
-}: {
-  item: string;
-  selected: boolean;
-}) => (
+  children,
+  onClick,
+}: React.PropsWithChildren<{ selected: boolean; onClick: () => void }>) => (
   <x.div display="flex" flexDirection="column">
-    <Button key={item} sx={{ color: "#fff" }}>
-      {item}
+    <Button sx={{ color: "#fff" }} onClick={onClick}>
+      {children}
     </Button>
     {selected && (
       <x.div display="flex" justifyContent="center">
@@ -48,7 +46,7 @@ interface Props {
 }
 
 const drawerWidth = 240;
-const navItems = [{ item: "Dashboard", route: Route.Dashboard }];
+const navItems = [{ text: "Dashboard", route: Route.Dashboard }];
 
 export function DrawerAppBar(props: Props) {
   const user = useAuthContext();
@@ -68,7 +66,7 @@ export function DrawerAppBar(props: Props) {
       </Typography>
       <Divider />
       <List>
-        {navItems.map(({ item, route }) => (
+        {navItems.map(({ text: item, route }) => (
           <ListItem key={route} disablePadding>
             <ListItemButton sx={{ textAlign: "center" }}>
               <ListItemText primary={item} />
@@ -103,17 +101,30 @@ export function DrawerAppBar(props: Props) {
           >
             Next Net Worth
           </Typography>
-          <Box sx={{ display: { xs: "none" } }}>
-            {navItems.map(({ item, route }) => (
-              <ToolbarButton item={item} selected={router.pathname === route} />
+          <Box sx={{ display: { xs: "none", sm: "block" } }}>
+            {navItems.map(({ text, route }) => (
+              <ToolbarButton
+                selected={router.pathname === route}
+                onClick={() => router.push(route)}
+              >
+                {text}
+              </ToolbarButton>
             ))}
           </Box>
-          {user && (
-            <LogoutIcon
-              sx={{ ml: 2, cursor: "pointer" }}
-              fontSize="small"
+          {user ? (
+            <ToolbarButton
               onClick={() => logout.mutate()}
-            />
+              selected={router.pathname === "/login"}
+            >
+              Logout
+            </ToolbarButton>
+          ) : (
+            <ToolbarButton
+              selected={router.pathname === "/login"}
+              onClick={() => router.push("/login")}
+            >
+              Login
+            </ToolbarButton>
           )}
         </Toolbar>
       </AppBar>
