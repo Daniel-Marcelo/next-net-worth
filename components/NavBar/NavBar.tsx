@@ -102,14 +102,15 @@ export function DrawerAppBar(props: Props) {
             Next Net Worth
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map(({ text, route }) => (
-              <ToolbarButton
-                selected={router.pathname === route}
-                onClick={() => router.push(route)}
-              >
-                {text}
-              </ToolbarButton>
-            ))}
+            {user &&
+              navItems.map(({ text, route }) => (
+                <ToolbarButton
+                  selected={router.pathname === route}
+                  onClick={() => router.push(route)}
+                >
+                  {text}
+                </ToolbarButton>
+              ))}
           </Box>
           {user ? (
             <ToolbarButton onClick={() => logout.mutate()}>
