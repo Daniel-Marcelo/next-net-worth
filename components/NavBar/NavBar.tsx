@@ -25,7 +25,7 @@ const ToolbarButton = ({
   selected,
   children,
   onClick,
-}: React.PropsWithChildren<{ selected: boolean; onClick: () => void }>) => (
+}: React.PropsWithChildren<{ selected?: boolean; onClick: () => void }>) => (
   <x.div display="flex" flexDirection="column">
     <Button sx={{ color: "#fff" }} onClick={onClick}>
       {children}
@@ -112,10 +112,7 @@ export function DrawerAppBar(props: Props) {
             ))}
           </Box>
           {user ? (
-            <ToolbarButton
-              onClick={() => logout.mutate()}
-              selected={router.pathname === "/login"}
-            >
+            <ToolbarButton onClick={() => logout.mutate()}>
               Logout
             </ToolbarButton>
           ) : (
