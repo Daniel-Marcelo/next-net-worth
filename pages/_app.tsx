@@ -8,6 +8,9 @@ import "@fontsource/roboto/700.css";
 import "../styles/global.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { useState } from "react";
+
+import { FixedBottomNavigation } from "../components/BottomNav/BottomNav";
 
 const darkTheme = createTheme({
   palette: {
@@ -17,6 +20,7 @@ const darkTheme = createTheme({
 
 const queryClient = new QueryClient();
 export default function MyApp({ Component, pageProps }: AppProps) {
+  const [value, setValue] = useState(0);
   return (
     <AuthContextProvider>
       <QueryClientProvider client={queryClient}>
@@ -24,6 +28,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <CssBaseline />
           {/* <DrawerAppBar /> */}
           <Component {...pageProps} />
+          <FixedBottomNavigation />
         </ThemeProvider>
       </QueryClientProvider>
     </AuthContextProvider>
