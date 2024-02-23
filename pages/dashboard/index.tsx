@@ -2,82 +2,63 @@ import yahooFinance from "yahoo-finance2";
 import { withProtected } from "../../components/RouteProtection";
 import { x } from "@xstyled/styled-components";
 import {
+  Avatar,
   Box,
   List,
   ListItem,
+  ListItemAvatar,
   ListItemText,
   TextField,
   Typography,
   debounce,
 } from "@mui/material";
 import { useState } from "react";
-import {
-  Quote,
-  QuoteType,
-  TickerSearchResponse,
-} from "../../types/api/ticker-search.types";
-import { useQuery } from "@tanstack/react-query";
-import { QueryKey } from "../../const/query.constants";
-import axios from "axios";
-import { stockExchangeCountries } from "../../const/exchangesToCountries.constants";
+import { QuoteType } from "../../types/api/ticker-search.types";
 
-function Page({ data }) {
-  const [text, setText] = useState("");
-  const [options, setOptions] = useState<Quote[]>([]);
+import { useQueryTickerSearch } from "../../hooks/useQueryTickerSearch";
 
-  useQuery<TickerSearchResponse>({
-    enabled: !!text,
-    queryKey: [QueryKey.TickerSearch, text],
-    queryFn: async () => {
-      const response = await axios.get("api/ticker-search/" + text);
-      setOptions(response.data.quotes);
-      return response.data;
-    },
-  });
-
-  const onChange: React.ChangeEventHandler<HTMLInputElement> = debounce(
-    (e) => setText(e.target.value),
-    200
-  );
-
-  const getStockExchangeInfoForOption = (option: Quote) =>
-    stockExchangeCountries.find(({ exchangeShortName }) =>
-      [option.exchDisp, option.exchange].includes(exchangeShortName)
-    );
+function Page() {
+  const { options, onChangeSearchText } = useQueryTickerSearch();
 
   return (
     <x.div>
       <TextField
-        sx={{
-          margin: 0,
-        }}
         label="Search for a ticker"
         variant="filled"
-        onChange={onChange}
+        onChange={onChangeSearchText}
         fullWidth
       />
-      <List
-        sx={{ width: "100%" }}
-        component="nav"
-        aria-labelledby="nested-list-subheader"
-      >
+      <List sx={{ width: "100%" }}>
         {!!options?.length &&
           options
-            .filter((option) => option.quoteType === QuoteType.Equity)
-            .map((option) => ({
-              ...option,
-              exchangeInfo: getStockExchangeInfoForOption(option),
-            }))
+            // .filter((option) =>
+            //   [QuoteType.Equity, QuoteType.Etf].includes(option.quoteType)
+            // )
             .map((option) => (
               <ListItem>
+                {option.website ? (
+                  <x.img
+                    loading="lazy"
+                    borderRadius=".5rem"
+                    mr="1rem"
+                    width="40"
+                    srcSet={`https://logo.clearbit.com/${option.website} 2x`}
+                    src={`https://logo.clearbit.com/${option.website}&size=196`}
+                    alt=""
+                  />
+                ) : (
+                  option.quoteType && (
+                    <ListItemAvatar>
+                      <Avatar>
+                        <Typography fontSize=".875rem">
+                          {option.typeDisp}
+                        </Typography>
+                      </Avatar>
+                    </ListItemAvatar>
+                  )
+                )}
                 <ListItemText
-                  primary={
-                    <>
-                      <Typography>
-                        {option.symbol} | {option.shortname}
-                      </Typography>
-                    </>
-                  }
+                  primary={<Typography>{option.shortname}</Typography>}
                   secondary={
                     <Box display="flex" alignItems="center" gap=".5rem">
                       <Typography component="span">

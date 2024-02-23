@@ -14,6 +14,7 @@ export interface Quote {
   industryDisp?: string;
   dispSecIndFlag?: boolean;
   isYahooFinance: boolean;
+  website?: string;
 }
 
 export enum QuoteType {
