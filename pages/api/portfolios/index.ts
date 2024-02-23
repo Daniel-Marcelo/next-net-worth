@@ -10,7 +10,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
-  if (req.method === "GET" && req.query.id) {
+  if (req.method === "GET") {
     const response = await portfolioService.getList();
     res.status(200).json(JSON.parse(JSON.stringify(response)));
   } else {

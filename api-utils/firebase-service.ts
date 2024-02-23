@@ -1,51 +1,29 @@
-import { admin, db } from "./admin";
-
-async function deleteQueryBatch(
-  database: admin.firestore.Firestore,
-  query: admin.firestore.Query<admin.firestore.DocumentData>,
-  resolve: (value?: unknown) => void
-) {
-  const snapshot = await query.get();
-
-  const batchSize = snapshot.size;
-  if (batchSize === 0) {
-    // When there are no documents left, we are done
-    resolve();
-    return;
-  }
-
-  // Delete documents in a batch
-  const batch = database.batch();
-  snapshot.docs.forEach((doc) => {
-    batch.delete(doc.ref);
-  });
-  await batch.commit();
-
-  // Recurse on the next process tick, to avoid
-  // exploding the stack.
-  process.nextTick(() => {
-    deleteQueryBatch(database, query, resolve);
-  });
-}
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  QueryConstraint,
+} from "firebase/firestore";
+import { DBService } from "./db-service";
+import { db } from "../utils/firebase";
 
 export class FirebaseService<T> {
-  protected readonly collectionRef: admin.firestore.CollectionReference<admin.firestore.DocumentData>;
+  constructor(public readonly collectionName: string) {}
 
-  constructor(public readonly collectionName: string) {
-    this.collectionRef = db.collection(collectionName);
+  async create(item: T) {
+    await addDoc(collection(db, this.collectionName), item);
   }
 
-  create(item: T) {
-    return this.collectionRef.add(item);
-  }
-
-  delete(id: string) {
-    return this.collectionRef.doc(id).delete();
+  async delete(id: string) {
+    await deleteDoc(doc(db, this.collectionName, id));
   }
 
   async get(id: string) {
-    console.log("Getting item by id", id);
-    const document = await this.collectionRef.doc(id).get();
+    const document = await getDoc(doc(db, this.collectionName, id));
     const item = document.data() as T;
 
     if (item) {
@@ -57,9 +35,12 @@ export class FirebaseService<T> {
     throw new Error("Document does not exist");
   }
 
-  async getList() {
+  async getByQuery(...queryConstraints: QueryConstraint[]) {
     const list = [] as T[];
-    const querySnapshot = await this.collectionRef.get();
+    const querySnapshot = await getDocs(
+      query(collection(db, this.collectionName), ...queryConstraints)
+    );
+
     querySnapshot.forEach((document) => {
       const item = document.data() as T;
       list.push({
@@ -70,12 +51,16 @@ export class FirebaseService<T> {
     return list;
   }
 
-  deleteList(ids: string[]) {
-    const query = this.collectionRef
-      .where(admin.firestore.FieldPath.documentId(), "in", ids)
-      .limit(100);
-    return new Promise((resolve, reject) => {
-      deleteQueryBatch(db, query, resolve).catch(reject);
+  async getList() {
+    const list = [] as T[];
+    const querySnapshot = await getDocs(collection(db, this.collectionName));
+    querySnapshot.forEach((document) => {
+      const item = document.data() as T;
+      list.push({
+        id: document.id,
+        ...item,
+      });
     });
+    return list;
   }
 }
