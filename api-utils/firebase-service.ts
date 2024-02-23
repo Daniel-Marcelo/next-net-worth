@@ -8,7 +8,6 @@ import {
   query,
   QueryConstraint,
 } from "firebase/firestore";
-import { DBService } from "./db-service";
 import { db } from "../utils/firebase";
 
 export class FirebaseService<T> {
