@@ -12,6 +12,9 @@ const options = {
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
+      httpOptions: {
+        timeout: 40000,
+      },
     }),
   ],
   adapter: PrismaAdapter(prisma),
