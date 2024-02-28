@@ -10,27 +10,12 @@ import {
   ListItemText,
   TextField,
   Typography,
-  debounce,
 } from "@mui/material";
-import { useState } from "react";
-import { QuoteType } from "../../types/api/ticker-search.types";
 import { LoginBtN } from "../../components/loginbtn";
 import { useQueryTickerSearch } from "../../hooks/useQueryTickerSearch";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
 function Page() {
   const { options, onChangeSearchText } = useQueryTickerSearch();
-
-  const q = useQuery({
-    queryKey: ["portfolios"],
-    queryFn: async () => {
-      const response = await axios.get("api/portfolios");
-      return response.data;
-    },
-  });
-
-  console.log(q.data);
 
   return (
     <x.div>

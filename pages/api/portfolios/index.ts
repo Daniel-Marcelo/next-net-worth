@@ -13,19 +13,8 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   if (req.method === "GET") {
-    const session = await getSession({ req });
-    const post = await prisma.post.findFirst({
-      where: {
-        authorId: String(1),
-      },
-      include: {
-        author: {
-          select: { name: true },
-        },
-      },
-    });
     const response = await portfolioService.getList();
-    res.status(200).json(JSON.parse(JSON.stringify({ post })));
+    res.status(200).json(JSON.parse(JSON.stringify({ response })));
   } else {
     res.status(405);
   }
