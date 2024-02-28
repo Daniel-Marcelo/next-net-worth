@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { QuoteType } from "../../types/api/ticker-search.types";
-
+import { LoginBtN } from "../../components/loginbtn";
 import { useQueryTickerSearch } from "../../hooks/useQueryTickerSearch";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -34,6 +34,7 @@ function Page() {
 
   return (
     <x.div>
+      <LoginBtN />
       <TextField
         label="Search for a ticker"
         variant="filled"

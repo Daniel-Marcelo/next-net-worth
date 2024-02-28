@@ -9,9 +9,9 @@ import "../styles/global.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useState } from "react";
+import { SessionProvider } from "next-auth/react";
 
 import { FixedBottomNavigation } from "../components/BottomNav/BottomNav";
-
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -19,18 +19,23 @@ const darkTheme = createTheme({
 });
 
 const queryClient = new QueryClient();
-export default function MyApp({ Component, pageProps }: AppProps) {
+export default function MyApp({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   const [value, setValue] = useState(0);
   return (
-    <AuthContextProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={darkTheme}>
-          <CssBaseline />
-          {/* <DrawerAppBar /> */}
-          <Component {...pageProps} />
-          <FixedBottomNavigation />
-        </ThemeProvider>
-      </QueryClientProvider>
-    </AuthContextProvider>
+    <SessionProvider session={session}>
+      <AuthContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
+            {/* <DrawerAppBar /> */}
+            <Component {...pageProps} />
+            <FixedBottomNavigation />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </AuthContextProvider>
+    </SessionProvider>
   );
 }
