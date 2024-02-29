@@ -11,7 +11,7 @@ export function withProtection(Component) {
     }
 
     if (status === "unauthenticated") {
-      router.push("/login");
+      router.push("/");
       return;
     }
 
