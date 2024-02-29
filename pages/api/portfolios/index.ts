@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { portfolioService } from "../../../api-utils/portfolio-service";
-import prisma from "../../../lib/prisma";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
 
 type ResponseData = {
   message: string;
@@ -13,8 +11,7 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   if (req.method === "GET") {
-    const response = await portfolioService.getList();
-    res.status(200).json(JSON.parse(JSON.stringify({ response })));
+    res.status(200).json(JSON.parse(JSON.stringify({ response: [] })));
   } else {
     res.status(405);
   }

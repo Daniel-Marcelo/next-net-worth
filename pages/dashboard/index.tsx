@@ -12,9 +12,20 @@ import {
 } from "@mui/material";
 import { useQueryTickerSearch } from "../../hooks/useQueryTickerSearch";
 import { withProtection } from "../../components/ProtectedRoute";
+import { Add, AddCircle } from "@mui/icons-material";
+import { QuoteType } from "../../types/api/ticker-search.types";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 function Page() {
   const { options, onChangeSearchText } = useQueryTickerSearch();
+
+  const mutation = useMutation({
+    mutationFn: (symbol: string) =>
+      axios.post("/api/holding", {
+        symbol,
+      }),
+  });
 
   return (
     <x.div>
@@ -27,11 +38,15 @@ function Page() {
       <List sx={{ width: "100%" }}>
         {!!options?.length &&
           options
-            // .filter((option) =>
-            //   [QuoteType.Equity, QuoteType.Etf].includes(option.quoteType)
-            // )
+            .filter((option) =>
+              [QuoteType.Equity, QuoteType.Etf].includes(option.quoteType)
+            )
             .map((option) => (
-              <ListItem>
+              <ListItem
+                secondaryAction={
+                  <AddCircle onClick={() => mutation.mutate(option.symbol)} />
+                }
+              >
                 {option.website ? (
                   <x.img
                     loading="lazy"
