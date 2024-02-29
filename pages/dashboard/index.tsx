@@ -1,5 +1,4 @@
 import yahooFinance from "yahoo-finance2";
-import { withProtected } from "../../components/RouteProtection";
 import { x } from "@xstyled/styled-components";
 import {
   Avatar,
@@ -11,15 +10,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { LoginBtN } from "../../components/loginbtn";
 import { useQueryTickerSearch } from "../../hooks/useQueryTickerSearch";
+import { withProtection } from "../../components/ProtectedRoute";
 
 function Page() {
   const { options, onChangeSearchText } = useQueryTickerSearch();
 
   return (
     <x.div>
-      <LoginBtN />
       <TextField
         label="Search for a ticker"
         variant="filled"
@@ -90,4 +88,4 @@ export async function getServerSideProps(props) {
   });
   return { props: { data: JSON.parse(JSON.stringify(res)) } };
 }
-export default withProtected(Page);
+export default withProtection(Page);

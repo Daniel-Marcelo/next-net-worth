@@ -1,14 +1,12 @@
 import yahooFinance from "yahoo-finance2";
 import { GoogleLoginButton } from "react-social-login-buttons";
-import { useLoginWithGoogle } from "../../hooks/useAuth";
-import { withPublic } from "../../components/RouteProtection";
-import { DrawerAppBar } from "../../components/NavBar";
-
+import { Button } from "@mui/material";
+import { LoginBtN } from "../../components/loginbtn";
 function Page({ data }) {
-  const loginWithGoogleMutation = useLoginWithGoogle();
   return (
     <>
-      <GoogleLoginButton onClick={loginWithGoogleMutation.mutate} />
+      <Button>Login</Button>
+      <LoginBtN />
     </>
   );
 }
@@ -20,4 +18,4 @@ export async function getServerSideProps(props) {
   return { props: { data: JSON.parse(JSON.stringify(res)) } };
 }
 
-export default withPublic(Page);
+export default Page;

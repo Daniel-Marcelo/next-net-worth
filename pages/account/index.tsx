@@ -1,5 +1,4 @@
 import { Box, Button, Typography } from "@mui/material";
-import { withProtected } from "../../components/RouteProtection";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 
@@ -24,4 +23,4 @@ export function Page() {
     </Box>
   );
 }
-export default withProtected(Page);
+export default Page;
