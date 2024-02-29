@@ -11,11 +11,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
-  if (req.method === "POST") {
+  if (req.method === "POST" && req.body.symbol) {
     const session = await getServerSession(req, res, authOptions);
     const result = await prisma.holding.create({
       data: {
-        symbol: "title",
+        symbol: req.body.symbol,
         user: { connect: { email: session?.user?.email } },
       },
     });
@@ -23,4 +23,5 @@ export default async function handler(
   } else {
     res.status(405);
   }
+  res.status(500);
 }
