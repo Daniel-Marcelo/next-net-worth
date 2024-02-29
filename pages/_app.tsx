@@ -28,7 +28,6 @@ export default function MyApp({
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={darkTheme}>
           <CssBaseline />
-          {/* <DrawerAppBar /> */}
           <Component {...pageProps} />
           <FixedBottomNavigation />
         </ThemeProvider>

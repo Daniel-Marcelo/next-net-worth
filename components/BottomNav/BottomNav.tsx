@@ -20,8 +20,10 @@ import {
   Route,
   RouteToNavIndex,
 } from "../../const/routes.constants";
+import { useSession } from "next-auth/react";
 
 export function FixedBottomNavigation() {
+  const { data: session } = useSession();
   const [value, setValue] = React.useState(0);
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -29,8 +31,12 @@ export function FixedBottomNavigation() {
   const router = useRouter();
 
   React.useEffect(() => {
-    ref.current.ownerDocument.body.scrollTop = 0;
+    if (ref?.current) {
+      ref.current.ownerDocument.body.scrollTop = 0;
+    }
   }, [value]);
+
+  if (!session) return <></>;
 
   return (
     <Box sx={{ pb: 7 }} ref={ref}>
