@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { holdingService } from "../../../api-utils/holding-service";
+import prisma from "../../../lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../../pages/api/auth/[...nextauth]";
 
 type ResponseData = {
   message: string;
@@ -10,8 +12,14 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   if (req.method === "POST") {
-    const response = await holdingService.create(req.body);
-    res.status(200).json(JSON.parse(JSON.stringify(response)));
+    const session = await getServerSession(req, res, authOptions);
+    const result = await prisma.holding.create({
+      data: {
+        symbol: "title",
+        user: { connect: { email: session?.user?.email } },
+      },
+    });
+    res.status(200).json(JSON.parse(JSON.stringify({ result })));
   } else {
     res.status(405);
   }
