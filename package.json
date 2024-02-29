@@ -3,7 +3,6 @@
   "scripts": {
     "build": "prisma generate && next build",
     "prisma": "prisma generate",
-    "prisma:push": "prisma db push",
     "dev": "next dev",
     "start": "next start"
   },
