@@ -15,6 +15,7 @@ import {
   specialCryptoSites,
   specialIndexFundSites,
 } from "../../../const/specialSites.constants";
+import { QuoteType } from "../../../types/api/ticker-search.types";
 
 type ResponseData = {
   message: string;
@@ -55,17 +56,23 @@ export default async function handler(
 ) {
   if (req.method === "GET" && req.query.id) {
     const response = await yahooFinance.search(req.query.id as string);
+    response.quotes = response.quotes.filter((option) =>
+      [
+        QuoteType.Equity,
+        QuoteType.Etf,
+        QuoteType.Cryptocurrency,
+        QuoteType.Currency,
+      ].includes(option.quoteType) || option.name
+    );
     const getWebsites = async () => {
       for await (const num of response.quotes) {
         if (num.symbol) {
-          console.log("getting data for " + num.symbol);
           try {
             const innerResponse = await yahooFinance.quoteSummary(num.symbol, {
               modules: ["summaryProfile"],
             });
 
             let website = innerResponse.summaryProfile.website;
-            console.log("checklis");
             if (website) {
               num.website = innerResponse.summaryProfile.website
                 .replaceAll("https://", "")
