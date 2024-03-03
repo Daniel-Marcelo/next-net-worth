@@ -1,6 +1,10 @@
 import axios from "axios";
 import { QueryKey } from "../const/query.constants";
-import { Quote, TickerSearchResponse } from "../types/api/ticker-search.types";
+import {
+  YFQuote,
+  TickerSearchResponse,
+  Quote,
+} from "../types/api/ticker-search.types";
 import { Url } from "../const/urls.constants";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -11,19 +15,21 @@ export const useQueryTickerSearch = () => {
   const [options, setOptions] = useState<Quote[]>([]);
   const [text, setText] = useState("");
 
-  const query = useQuery<TickerSearchResponse>({
+  const query = useQuery<Quote[]>({
     enabled: !!text,
     queryKey: [QueryKey.TickerSearch, text],
     queryFn: async () => {
-      const response = await axios.get(Url.TickerSearch(text));
-      setOptions(response.data.quotes);
+      const response = await axios.get<Quote[]>(Url.TickerSearch(text));
+      setOptions(response.data);
       return response.data;
     },
   });
 
   const getStockExchangeInfoForOption = (option: Quote) =>
     stockExchangeCountries.find(({ exchangeShortName }) =>
-      [option.exchDisp, option.exchange].includes(exchangeShortName)
+      [option.exchangeCode, option.exchangeDisplayName].includes(
+        exchangeShortName
+      )
     );
 
   const onChangeSearchText: React.ChangeEventHandler<HTMLInputElement> =

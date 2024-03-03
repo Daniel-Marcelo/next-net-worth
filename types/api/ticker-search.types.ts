@@ -1,4 +1,4 @@
-export interface Quote {
+export interface YFQuote {
   exchange: string;
   shortname: string;
   quoteType: QuoteType;
@@ -52,7 +52,7 @@ interface NewsItem {
 export interface TickerSearchResponse {
   explains: any[];
   count: number;
-  quotes: Quote[];
+  quotes: YFQuote[];
   news: NewsItem[];
   nav: any[];
   lists: any[];
@@ -68,4 +68,23 @@ export interface TickerSearchResponse {
   timeTakenForResearchReports: number;
   timeTakenForScreenerField: number;
   timeTakenForCulturalAssets: number;
+}
+
+export interface Quote {
+  sectorVisibility: boolean;
+  exchangeDisplayName: string;
+  exchangeCode: string;
+  quoteCollection: string;
+  productIndustry: string;
+  industryDisplay: string;
+  financeDataSource: boolean;
+  companyFullName: string;
+  equityType: string;
+  relevanceScore: number;
+  businessSector: string;
+  sectorDisplay: string;
+  companyShortName: string;
+  tickerSymbol: string;
+  displayType: string;
+  companyWebsite: string;
 }

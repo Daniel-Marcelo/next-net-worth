@@ -1,54 +1,76 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import yahooFinance from "yahoo-finance2";
+import { SearchResult } from "yahoo-finance2/dist/esm/src/modules/search";
 import {
-  SearchQuoteNonYahoo,
-  SearchQuoteYahooCryptocurrency,
-  SearchQuoteYahooCurrency,
-  SearchQuoteYahooETF,
-  SearchQuoteYahooEquity,
-  SearchQuoteYahooFund,
-  SearchQuoteYahooFuture,
-  SearchQuoteYahooIndex,
-  SearchQuoteYahooOption,
-} from "yahoo-finance2/dist/esm/src/modules/search";
-import {
-  specialCryptoSites,
+  cryptoWebsites,
   specialIndexFundSites,
 } from "../../../const/specialSites.constants";
-import { QuoteType } from "../../../types/api/ticker-search.types";
+import { Quote, QuoteType } from "types/api/ticker-search.types";
+import orderBy from "lodash/orderBy";
+import { Unpacked } from "types/util.types";
 
 type ResponseData = {
   message: string;
 };
 
-type QuoteResult =
-  | SearchQuoteYahooEquity
-  | SearchQuoteYahooOption
-  | SearchQuoteYahooETF
-  | SearchQuoteYahooFund
-  | SearchQuoteYahooIndex
-  | SearchQuoteYahooCurrency
-  | SearchQuoteYahooCryptocurrency
-  | SearchQuoteNonYahoo
-  | SearchQuoteYahooFuture;
-
-const AddSpecialSite = (quote: QuoteResult) => {
-  if (quote.longname) {
-    for (const site of specialIndexFundSites) {
-      if (quote.longname.toLowerCase().includes(site.text.toLowerCase())) {
-        return site.site;
-      }
-    }
-    for (const site of specialCryptoSites) {
-      if (
-        quote.longname.toLowerCase().includes(site.text.toLowerCase()) ||
-        quote.longname.toLowerCase().includes(site.ticker.toLowerCase())
-      ) {
-        return site.site;
-      }
+const addWebsiteOverride = (longname: string) => {
+  for (const sites of [specialIndexFundSites, cryptoWebsites]) {
+    for (const site of sites) {
+      if (site.searchText.includes(longname)) return site.site;
     }
   }
 };
+
+const getWebsite = async (symbol: string) => {
+  try {
+    const innerResponse = await yahooFinance.quoteSummary(symbol, {
+      modules: ["summaryProfile"],
+    });
+
+    let website = innerResponse.summaryProfile.website;
+    if (website) {
+      website = innerResponse.summaryProfile.website
+        .replaceAll("https://", "")
+        .replaceAll("http://", "")
+        .replaceAll("www.", "");
+      return website;
+    }
+  } catch {
+    console.error("Error getting data for " + symbol);
+  }
+  return "";
+};
+
+const desiredQuoteTypes = [
+  QuoteType.Equity,
+  QuoteType.Etf,
+  QuoteType.Cryptocurrency,
+  QuoteType.Currency,
+];
+
+async function mapOriginalToStockQuote(
+  original: Unpacked<SearchResult["quotes"]>
+): Promise<Quote> {
+  let site: string = addWebsiteOverride(original.longname?.toLowerCase() || "");
+  return {
+    sectorVisibility: original.dispSecIndFlag,
+    exchangeDisplayName: original.exchDisp,
+    exchangeCode: original.exchange,
+    quoteCollection: original.index,
+    productIndustry: original.industry,
+    industryDisplay: original.industryDisp,
+    financeDataSource: original.isYahooFinance,
+    companyFullName: original.longname,
+    equityType: original.quoteType,
+    relevanceScore: original.score,
+    businessSector: original.sector,
+    sectorDisplay: original.sectorDisp,
+    companyShortName: original.shortname,
+    tickerSymbol: original.symbol,
+    displayType: original.typeDisp,
+    companyWebsite: site ? site : await getWebsite(original.symbol),
+  };
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -56,41 +78,20 @@ export default async function handler(
 ) {
   if (req.method === "GET" && req.query.id) {
     const response = await yahooFinance.search(req.query.id as string);
-    response.quotes = response.quotes.filter((option) =>
-      [
-        QuoteType.Equity,
-        QuoteType.Etf,
-        QuoteType.Cryptocurrency,
-        QuoteType.Currency,
-      ].includes(option.quoteType) || option.name
+    const quotes = orderBy(
+      response.quotes.filter((option) =>
+        desiredQuoteTypes.includes(option.quoteType)
+      ),
+      "score",
+      "desc"
     );
-    const getWebsites = async () => {
-      for await (const num of response.quotes) {
-        if (num.symbol) {
-          try {
-            const innerResponse = await yahooFinance.quoteSummary(num.symbol, {
-              modules: ["summaryProfile"],
-            });
 
-            let website = innerResponse.summaryProfile.website;
-            if (website) {
-              num.website = innerResponse.summaryProfile.website
-                .replaceAll("https://", "")
-                .replaceAll("http://", "")
-                .replaceAll("www.", "");
-            }
-          } catch {
-            console.log("error getting data for " + num.symbol);
-            continue;
-          }
-          if (!num.website) {
-            num.website = AddSpecialSite(num);
-          }
-        }
-      }
-    };
-    await getWebsites();
-    res.status(200).json(JSON.parse(JSON.stringify(response)));
+    let stockQuotes: Quote[] = [];
+    for await (const quote of quotes) {
+      stockQuotes.push(await mapOriginalToStockQuote(quote));
+    }
+
+    res.status(200).json(JSON.parse(JSON.stringify(stockQuotes)));
   } else {
     res.status(405);
   }

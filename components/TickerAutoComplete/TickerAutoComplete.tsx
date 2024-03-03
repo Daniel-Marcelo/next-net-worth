@@ -7,14 +7,14 @@ import axios from "axios";
 import debounce from "lodash/debounce";
 import { QueryKey } from "../../const/query.constants";
 import {
-  Quote,
+  YFQuote,
   TickerSearchResponse,
 } from "../../types/api/ticker-search.types";
 import SearchIcon from "@mui/icons-material/Search";
 
 export const CountrySelect = () => {
   const [text, setText] = React.useState("");
-  const [options, setOptions] = React.useState<Quote[]>([]);
+  const [options, setOptions] = React.useState<YFQuote[]>([]);
 
   useQuery<TickerSearchResponse>({
     enabled: !!text,
@@ -31,7 +31,7 @@ export const CountrySelect = () => {
   );
 
   return (
-    <Autocomplete<Quote>
+    <Autocomplete<YFQuote>
       id="country-select-demo"
       //   sx={{ width: 300 }}
       fullWidth

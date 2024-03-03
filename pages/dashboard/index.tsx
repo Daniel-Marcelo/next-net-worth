@@ -40,36 +40,40 @@ function Page() {
           options.map((option) => (
             <ListItem
               secondaryAction={
-                <AddCircle onClick={() => mutation.mutate(option.symbol)} />
+                <AddCircle
+                  color="primary"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => mutation.mutate(option.tickerSymbol)}
+                />
               }
             >
-              {option.website ? (
+              {option.companyWebsite ? (
                 <x.img
                   loading="lazy"
                   borderRadius=".5rem"
                   mr="1rem"
                   width="40"
-                  srcSet={`https://logo.clearbit.com/${option.website} 2x`}
-                  src={`https://logo.clearbit.com/${option.website}&size=196`}
+                  srcSet={`https://logo.clearbit.com/${option.companyWebsite} 2x`}
+                  src={`https://logo.clearbit.com/${option.companyWebsite}&size=196`}
                   alt=""
                 />
               ) : (
-                option.quoteType && (
+                option.equityType && (
                   <ListItemAvatar>
                     <Avatar>
                       <Typography fontSize=".875rem">
-                        {option.typeDisp}
+                        {option.displayType}
                       </Typography>
                     </Avatar>
                   </ListItemAvatar>
                 )
               )}
               <ListItemText
-                primary={<Typography>{option.shortname}</Typography>}
+                primary={<Typography>{option.companyShortName}</Typography>}
                 secondary={
                   <Box display="flex" alignItems="center" gap=".5rem">
                     <Typography component="span">
-                      {option.exchange || option.exchDisp}{" "}
+                      {option.exchangeCode || option.exchangeDisplayName}{" "}
                     </Typography>
                     {option.exchangeInfo && (
                       <>
