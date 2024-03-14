@@ -3,6 +3,7 @@ import { x } from "@xstyled/styled-components";
 import {
   Avatar,
   Box,
+  CircularProgress,
   List,
   ListItem,
   ListItemAvatar,
@@ -16,28 +17,38 @@ import { Add, AddCircle } from "@mui/icons-material";
 import { QuoteType } from "../../types/api/ticker-search.types";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useEffect } from "react";
+import { useQueryGetHoldings } from "hooks/useQueryGetHoldings";
 
 function Page() {
-  const { options, onChangeSearchText } = useQueryTickerSearch();
+  const { options, onChangeSearchText, query } = useQueryTickerSearch();
+
+  const getHoldingsQuery = useQueryGetHoldings();
 
   const mutation = useMutation({
     mutationFn: (symbol: string) =>
-      axios.post("/api/holding", {
+      axios.post("/api/holdings", {
         symbol,
       }),
   });
 
   return (
-    <x.div>
+    <Box
+      sx={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <TextField
         label="Search for a ticker"
         variant="filled"
         onChange={onChangeSearchText}
         fullWidth
       />
-      <List sx={{ width: "100%" }}>
-        {!!options?.length &&
-          options.map((option) => (
+      {!!options?.length && !query.isFetching && (
+        <List sx={{ width: "100%" }}>
+          {options.map((option) => (
             <ListItem
               secondaryAction={
                 <AddCircle
@@ -92,8 +103,21 @@ function Page() {
               />
             </ListItem>
           ))}
-      </List>
-    </x.div>
+        </List>
+      )}
+      {query.isFetching && (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flex: 1,
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
+    </Box>
   );
 }
 

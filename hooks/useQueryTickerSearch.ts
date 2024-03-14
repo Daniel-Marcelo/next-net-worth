@@ -18,8 +18,10 @@ export const useQueryTickerSearch = () => {
   const query = useQuery<Quote[]>({
     enabled: !!text,
     queryKey: [QueryKey.TickerSearch, text],
-    queryFn: async () => {
-      const response = await axios.get<Quote[]>(Url.TickerSearch(text));
+    queryFn: async ({ signal }) => {
+      const response = await axios.get<Quote[]>(Url.TickerSearch(text), {
+        signal,
+      });
       setOptions(response.data);
       return response.data;
     },
