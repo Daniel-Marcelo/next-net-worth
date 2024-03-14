@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useQueryGetHoldings = () => {
   const query = useQuery({
-    queryKey: [QueryKey.TickerSearch],
+    queryKey: [QueryKey.GetHoldings],
     queryFn: async ({ signal }) => {
       const response = await axios.get<{ symbol: string }>(Url.GetHoldings(), {
         signal,

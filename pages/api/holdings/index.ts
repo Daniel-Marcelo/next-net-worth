@@ -1,10 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../../pages/api/auth/[...nextauth]";
+import { getServerSession } from "../getServerSession";
 
 type ResponseData = {
-  message: string;
+  holdings: string[];
 };
 
 export default async function handler(
@@ -12,7 +11,7 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   if (req.method === "POST" && req.body.symbol) {
-    const session = await getServerSession(req, res, authOptions);
+    const session = await getServerSession(req, res);
     const result = await prisma.holding.create({
       data: {
         symbol: req.body.symbol,
@@ -20,6 +19,17 @@ export default async function handler(
       },
     });
     res.status(200).json(JSON.parse(JSON.stringify({ result })));
+  } else if (req.method === "GET") {
+    const id = req.query.id;
+    if (!id) {
+      const session = await getServerSession(req, res);
+      const holdings = await prisma.holding.findMany({
+        where: { userId: session.user.id },
+      });
+      res
+        .status(200)
+        .json({ holdings: holdings.map((holding) => holding.symbol) });
+    }
   } else {
     res.status(405);
   }
