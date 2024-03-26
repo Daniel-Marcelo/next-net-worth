@@ -13,10 +13,11 @@ datasource db {
 // schema.prisma
 
 model Holding {
-    id     String  @id @default(cuid())
-    symbol String
-    user   User?   @relation(fields: [userId], references: [id])
-    userId String?
+    id       String  @id @default(cuid())
+    symbol   String
+    quantity Decimal
+    user     User?   @relation(fields: [userId], references: [id])
+    userId   String?
 }
 
 model Post {
