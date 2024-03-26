@@ -21,6 +21,7 @@ import {
   RouteToNavIndex,
 } from "../../const/routes.constants";
 import { useSession } from "next-auth/react";
+import SearchIcon from "@mui/icons-material/Search";
 
 export function FixedBottomNavigation() {
   const { data: session } = useSession();
@@ -56,6 +57,7 @@ export function FixedBottomNavigation() {
             label="Dashboard"
             icon={<AccountCircleIcon />}
           />
+          <BottomNavigationAction label="Search" icon={<SearchIcon />} />
           <BottomNavigationAction
             label="Account"
             icon={<AccountCircleIcon />}

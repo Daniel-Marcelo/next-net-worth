@@ -13,16 +13,12 @@ import {
 } from "@mui/material";
 import { useQueryTickerSearch } from "../../hooks/useQueryTickerSearch";
 import { withProtection } from "../../components/ProtectedRoute";
-import { Add, AddCircle } from "@mui/icons-material";
-import { QuoteType } from "../../types/api/ticker-search.types";
+import { AddCircle } from "@mui/icons-material";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { useQueryGetHoldings } from "hooks/useQueryGetHoldings";
 
 function Page() {
   const { options, onChangeSearchText, query } = useQueryTickerSearch();
-
-  const getHoldingsQuery = useQueryGetHoldings();
 
   const mutation = useMutation({
     mutationFn: (symbol: string) =>
