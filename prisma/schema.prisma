@@ -20,6 +20,11 @@ model Holding {
     userId   String?
 }
 
+model SymbolWebsite {
+    symbol  String @unique
+    website String
+}
+
 model Post {
     id        String  @id @default(cuid())
     title     String
