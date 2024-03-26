@@ -8,7 +8,7 @@ export const useQueryGetHoldings = () => {
   const query = useQuery({
     queryKey: [QueryKey.GetHoldings],
     queryFn: async ({ signal }) => {
-      const response = await axios.get<{ symbol: string }[]>(
+      const response = await axios.get<{ holdings: string[] }>(
         Url.GetHoldings(),
         {
           signal,

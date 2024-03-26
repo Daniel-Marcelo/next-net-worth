@@ -14,18 +14,27 @@ import {
 import { useQueryTickerSearch } from "../../hooks/useQueryTickerSearch";
 import { withProtection } from "../../components/ProtectedRoute";
 import { AddCircle } from "@mui/icons-material";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useQueryGetHoldings } from "hooks/useQueryGetHoldings";
 
 function Page() {
   const { options, onChangeSearchText, query } = useQueryTickerSearch();
+  const getHoldingsQuery = useQueryGetHoldings();
 
-  const mutation = useMutation({
+  const addHoldingMutation = useMutation({
     mutationFn: (symbol: string) =>
       axios.post("/api/holdings", {
         symbol,
       }),
   });
+
+  const deleteHoldingMutation = useMutation({
+    mutationFn: (symbol: string) => axios.delete("/api/holdings"),
+  });
+
+  const holdings = getHoldingsQuery?.data?.holdings || [];
 
   return (
     <Box
@@ -46,11 +55,25 @@ function Page() {
           {options.map((option) => (
             <ListItem
               secondaryAction={
-                <AddCircle
-                  color="primary"
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => mutation.mutate(option.tickerSymbol)}
-                />
+                <>
+                  {!holdings.includes(option.tickerSymbol) ? (
+                    <AddCircle
+                      color="primary"
+                      sx={{ cursor: "pointer" }}
+                      onClick={() =>
+                        addHoldingMutation.mutate(option.tickerSymbol)
+                      }
+                    />
+                  ) : (
+                    <RemoveCircleIcon
+                      color="error"
+                      sx={{ cursor: "pointer" }}
+                      onClick={() =>
+                        addHoldingMutation.mutate(option.tickerSymbol)
+                      }
+                    />
+                  )}
+                </>
               }
             >
               {option.companyWebsite ? (
