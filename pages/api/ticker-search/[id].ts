@@ -8,6 +8,7 @@ import {
 import { Quote, QuoteType } from "types/api/ticker-search.types";
 import orderBy from "lodash/orderBy";
 import { Unpacked } from "types/util.types";
+import prisma from "../../../lib/prisma";
 
 type ResponseData = {
   message: string;
@@ -27,10 +28,10 @@ const getWebsite = async (symbol: string) => {
       modules: ["summaryProfile"],
     });
 
-    let website = innerResponse.summaryProfile.website;
+    let website = innerResponse.summaryProfile?.website;
     if (website) {
-      website = innerResponse.summaryProfile.website
-        .replaceAll("https://", "")
+      website = innerResponse.summaryProfile?.website
+        ?.replaceAll("https://", "")
         .replaceAll("http://", "")
         .replaceAll("www.", "");
       return website;
@@ -51,7 +52,8 @@ const desiredQuoteTypes = [
 async function mapOriginalToStockQuote(
   original: Unpacked<SearchResult["quotes"]>
 ): Promise<Quote> {
-  let site: string = addWebsiteOverride(original.longname?.toLowerCase() || "");
+  let site: string =
+    addWebsiteOverride(original.longname?.toLowerCase() || "") ?? "";
   return {
     sectorVisibility: original.dispSecIndFlag,
     exchangeDisplayName: original.exchDisp,
@@ -68,7 +70,7 @@ async function mapOriginalToStockQuote(
     companyShortName: original.shortname,
     tickerSymbol: original.symbol,
     displayType: original.typeDisp,
-    companyWebsite: site ? site : await getWebsite(original.symbol),
+    companyWebsite: site ? site : (await getWebsite(original.symbol)) ?? "",
   };
 }
 

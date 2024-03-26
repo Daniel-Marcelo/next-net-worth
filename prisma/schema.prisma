@@ -15,6 +15,7 @@ datasource db {
 model Holding {
     id       String  @id @default(cuid())
     symbol   String
+    name     String
     quantity Decimal
     user     User?   @relation(fields: [userId], references: [id])
     userId   String?
