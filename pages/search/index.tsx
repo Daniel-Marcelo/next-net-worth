@@ -25,8 +25,9 @@ function Page() {
 
   const addHoldingMutation = useMutation({
     mutationFn: (symbol: string) =>
-      axios.post("/api/holdings", {
+      axios.post<{ symbol: string; quantity: number }>("/api/holdings", {
         symbol,
+        quantity: 0,
       }),
   });
 

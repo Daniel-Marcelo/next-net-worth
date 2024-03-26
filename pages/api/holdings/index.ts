@@ -15,6 +15,7 @@ export default async function handler(
     const result = await prisma.holding.create({
       data: {
         symbol: req.body.symbol,
+        quantity: req.body.quantity,
         user: { connect: { email: session?.user?.email } },
       },
     });
