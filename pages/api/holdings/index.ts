@@ -41,7 +41,7 @@ export default async function handler(
         updatedHoldings.push({
           id: holding.id,
           symbol: holding.symbol,
-          name: holding.name,
+          name: holding.name ?? "",
           quantity: +holding.quantity,
           price: quote.regularMarketPrice,
           site: site ?? "",
