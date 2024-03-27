@@ -37,11 +37,11 @@ export function FixedBottomNavigation() {
     }
   }, [value]);
 
-  const onChange = (newValue?: number) => {
-    const route = NavIndexToRoute.get(newValue)
+  const onChange = (newValue: number | undefined) => {
+    const route = newValue ? NavIndexToRoute.get(newValue) : undefined;
 
-    if(route) router.replace(route);
-  }
+    if (route) router.replace(route);
+  };
 
   if (!session) return <></>;
 
@@ -55,9 +55,7 @@ export function FixedBottomNavigation() {
         <BottomNavigation
           showLabels
           value={RouteToNavIndex.get(pathname as Route)}
-          onChange={(event, newValue) =>
-            onChange(newValue)
-          }
+          onChange={(event, newValue) => onChange(newValue)}
         >
           <BottomNavigationAction
             label="Dashboard"
