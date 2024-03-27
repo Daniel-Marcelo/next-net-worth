@@ -3,7 +3,6 @@ import { x } from "@xstyled/styled-components";
 import {
   Avatar,
   Box,
-  CircularProgress,
   List,
   ListItem,
   ListItemAvatar,
