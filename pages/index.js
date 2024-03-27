@@ -12,23 +12,23 @@ export default function Home() {
   return (
     <Box
       sx={{
-        px: "9rem",
         height: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
-        gap: "2rem",
+        flex: '1',
+        gap: "2rem",  
       }}
     >
       {["loading", "authenticated"].includes(status) ? (
         <CircularProgress />
       ) : (
-        <>
+        <Box sx={{display: 'flex', flexDirection: 'column'}}>
           <Typography variant="h3" sx={{ letterSpacing: ".25rem" }}>
             My Net Worth
           </Typography>
-          <BarChartRounded sx={{ fontSize: 96 }} />
+          <Box sx={{textAlign: 'center'}}><BarChartRounded sx={{ fontSize: 96 }} /></Box>
           <Box
             sx={{
               alignSelf: "stretch",
@@ -44,7 +44,7 @@ export default function Home() {
               Login
             </Button>
           </Box>
-        </>
+        </Box>
       )}
     </Box>
   );
