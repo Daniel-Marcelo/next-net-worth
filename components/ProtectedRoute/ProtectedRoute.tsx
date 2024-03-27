@@ -1,3 +1,4 @@
+import { PageLevelCircularProgress } from "components/PageLevelCircularProgress";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
@@ -7,7 +8,7 @@ export function withProtection(Component) {
     const { status } = useSession();
 
     if (status === "loading") {
-      return <p>Loading...</p>;
+      return <PageLevelCircularProgress />;
     }
 
     if (status === "unauthenticated") {

@@ -3,11 +3,17 @@ import { x } from "@xstyled/styled-components";
 import {
   Avatar,
   Box,
+  Card,
+  CardContent,
+  CircularProgress,
+  ClickAwayListener,
+  IconButton,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useQueryTickerSearch } from "../../hooks/useQueryTickerSearch";
@@ -20,26 +26,45 @@ import { useQueryGetHoldings } from "hooks/useQueryGetHoldings";
 import { FormattingConstants } from "const/formatting.constants";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { Holding } from "types/holding.types";
+import { PageLevelCircularProgress } from "components/PageLevelCircularProgress";
+import InfoIcon from "@mui/icons-material/Info";
+import React from "react";
 
+const currencyFormatter = new Intl.NumberFormat("en-GB", {
+  style: "currency",
+  currency: "GBP",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
 function Page() {
-  const getHoldingsQuery = useQueryGetHoldings();
+  const [open, setOpen] = React.useState(false);
 
+  const handleTooltipClose = () => {
+    setOpen(false);
+  };
+  const getHoldingsQuery = useQueryGetHoldings();
   const holdings = getHoldingsQuery.data ?? [];
 
   const currentValuation = (holding: Holding) => {
     if (!holding.price) return 0;
-    const value = holding.price * holding.quantity;
-
-    const formatter = new Intl.NumberFormat("en-GB", {
-      style: "currency",
-      currency: "GBP",
-
-      minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-      maximumFractionDigits: 2, // (causes 2500.99 to be printed as $2,501)
-    });
-
-    return formatter.format(value);
+    return holding.price * holding.quantity;
   };
+
+  const currentFormattedValuation = (holding: Holding) => {
+    const value = currentValuation(holding);
+    return currencyFormatter.format(value);
+  };
+
+  if (getHoldingsQuery.isFetching) {
+    return <PageLevelCircularProgress />;
+  }
+
+  const total = holdings.reduce(
+    (sum, holding) => sum + currentValuation(holding),
+    0
+  );
+
+  const annualAverageInterest = currencyFormatter.format(total * 0.08);
 
   return (
     <Box
@@ -47,8 +72,33 @@ function Page() {
         flex: 1,
         display: "flex",
         flexDirection: "column",
+        px: 2,
       }}
     >
+      <Card sx={{ minWidth: 275, my: "2rem" }}>
+        <CardContent>
+          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+            Total {total}
+          </Typography>
+          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+            You will earn on average {annualAverageInterest} portfolio growth
+            per year!
+            <ClickAwayListener onClickAway={handleTooltipClose}>
+              <Tooltip
+                onClick={() => setOpen(true)}
+                onMouseEnter={() => setOpen(true)}
+                onMouseLeave={() => setOpen(false)}
+                open={open}
+                title="On average, the world market has returned 8% annualised average growth over the past century"
+              >
+                <IconButton>
+                  <InfoIcon />
+                </IconButton>
+              </Tooltip>
+            </ClickAwayListener>
+          </Typography>
+        </CardContent>
+      </Card>
       {!!holdings.length && !getHoldingsQuery.isFetching && (
         <List sx={{ width: "100%" }}>
           {holdings.map((holding) => (
@@ -74,10 +124,10 @@ function Page() {
                 }
                 secondary={
                   <x.div display="flex" gap=".25rem" alignItems="center">
-                    <Typography>{holding.quantity}</Typography>
-                    <DescriptionIcon fontSize="small" />
-                    <Typography sx={{ ml: ".25rem" }}>
-                      {currentValuation(holding)}
+                    <Typography variant="body2">
+                      {holding.quantity}
+                      {FormattingConstants.Interpunct}
+                      {currentFormattedValuation(holding)}
                     </Typography>
                   </x.div>
                 }
