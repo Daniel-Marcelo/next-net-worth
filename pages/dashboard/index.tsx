@@ -18,18 +18,29 @@ import { QuoteType } from "../../types/api/ticker-search.types";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useQueryGetHoldings } from "hooks/useQueryGetHoldings";
+import { FormattingConstants } from "const/formatting.constants";
+import DescriptionIcon from "@mui/icons-material/Description";
+import { Holding } from "types/holding.types";
 
 function Page() {
-  const { options, onChangeSearchText, query } = useQueryTickerSearch();
-
   const getHoldingsQuery = useQueryGetHoldings();
 
-  const mutation = useMutation({
-    mutationFn: (symbol: string) =>
-      axios.post("/api/holdings", {
-        symbol,
-      }),
-  });
+  const holdings = getHoldingsQuery.data ?? [];
+
+  const currentValuation = (holding: Holding) => {
+    if (!holding.price) return 0;
+    const value = holding.price * holding.quantity;
+
+    const formatter = new Intl.NumberFormat("en-GB", {
+      style: "currency",
+      currency: "GBP",
+
+      minimumFractionDigits: 2, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+      maximumFractionDigits: 2, // (causes 2500.99 to be printed as $2,501)
+    });
+
+    return formatter.format(value);
+  };
 
   return (
     <Box
@@ -39,82 +50,42 @@ function Page() {
         flexDirection: "column",
       }}
     >
-      <TextField
-        label="Search for a ticker"
-        variant="filled"
-        onChange={onChangeSearchText}
-        fullWidth
-      />
-      {!!options?.length && !query.isFetching && (
+      {!!holdings.length && !getHoldingsQuery.isFetching && (
         <List sx={{ width: "100%" }}>
-          {options.map((option) => (
-            <ListItem
-              secondaryAction={
-                <AddCircle
-                  color="primary"
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => mutation.mutate(option.tickerSymbol)}
-                />
-              }
-            >
-              {option.companyWebsite ? (
+          {holdings.map((holding) => (
+            <ListItem>
+              {holding.site ? (
                 <x.img
                   loading="lazy"
                   borderRadius=".5rem"
                   mr="1rem"
                   width="40"
-                  srcSet={`https://logo.clearbit.com/${option.companyWebsite} 2x`}
-                  src={`https://logo.clearbit.com/${option.companyWebsite}&size=196`}
+                  srcSet={`https://logo.clearbit.com/${holding.site} 2x`}
+                  src={`https://logo.clearbit.com/${holding.site}&size=196`}
                   alt=""
                 />
-              ) : (
-                option.equityType && (
-                  <ListItemAvatar>
-                    <Avatar>
-                      <Typography fontSize=".875rem">
-                        {option.displayType}
-                      </Typography>
-                    </Avatar>
-                  </ListItemAvatar>
-                )
-              )}
+              ) : null}
               <ListItemText
-                primary={<Typography>{option.companyShortName}</Typography>}
+                primary={
+                  <Typography>
+                    {holding.symbol}
+                    {FormattingConstants.Interpunct}
+                    {holding.name}
+                  </Typography>
+                }
                 secondary={
-                  <Box display="flex" alignItems="center" gap=".5rem">
-                    <Typography component="span">
-                      {option.exchangeCode || option.exchangeDisplayName}{" "}
+                  <x.div display="flex" gap=".25rem" alignItems="center">
+                    <Typography>{holding.quantity}</Typography>
+                    <DescriptionIcon fontSize="small" />
+                    <Typography sx={{ ml: ".25rem" }}>
+                      {currentValuation(holding)}
                     </Typography>
-                    {option.exchangeInfo && (
-                      <>
-                        |{" "}
-                        <img
-                          loading="lazy"
-                          width="20"
-                          srcSet={`https://flagcdn.com/w40/${option.exchangeInfo.countryCode.toLowerCase()}.png 2x`}
-                          src={`https://flagcdn.com/w20/${option.exchangeInfo.countryCode.toLowerCase()}.png`}
-                          alt=""
-                        />
-                      </>
-                    )}
-                  </Box>
+                  </x.div>
                 }
               />
             </ListItem>
           ))}
         </List>
-      )}
-      {query.isFetching && (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flex: 1,
-            justifyContent: "center",
-          }}
-        >
-          <CircularProgress />
-        </Box>
       )}
     </Box>
   );

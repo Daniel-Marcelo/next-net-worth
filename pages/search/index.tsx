@@ -24,18 +24,23 @@ function Page() {
   const getHoldingsQuery = useQueryGetHoldings();
 
   const addHoldingMutation = useMutation({
-    mutationFn: (symbol: string) =>
-      axios.post<{ symbol: string; quantity: number }>("/api/holdings", {
-        symbol,
-        quantity: 0,
-      }),
+    mutationFn: ({ symbol, name }: { symbol: string; name: string }) =>
+      axios.post<{ symbol: string; name: string; quantity: number }>(
+        "/api/holdings",
+        {
+          symbol,
+          name,
+          quantity: 0,
+        }
+      ),
   });
 
   const deleteHoldingMutation = useMutation({
     mutationFn: (symbol: string) => axios.delete("/api/holdings"),
   });
 
-  const holdings = getHoldingsQuery?.data?.holdings || [];
+  const holdings = getHoldingsQuery?.data ?? [];
+  console.log(holdings);
 
   return (
     <Box
@@ -57,12 +62,17 @@ function Page() {
             <ListItem
               secondaryAction={
                 <>
-                  {!holdings.includes(option.tickerSymbol) ? (
+                  {!holdings.some(
+                    (holding) => holding.symbol === option.tickerSymbol
+                  ) ? (
                     <AddCircle
                       color="primary"
                       sx={{ cursor: "pointer" }}
                       onClick={() =>
-                        addHoldingMutation.mutate(option.tickerSymbol)
+                        addHoldingMutation.mutate({
+                          symbol: option.tickerSymbol,
+                          name: option.companyShortName,
+                        })
                       }
                     />
                   ) : (
@@ -70,7 +80,10 @@ function Page() {
                       color="error"
                       sx={{ cursor: "pointer" }}
                       onClick={() =>
-                        addHoldingMutation.mutate(option.tickerSymbol)
+                        addHoldingMutation.mutate({
+                          symbol: option.tickerSymbol,
+                          name: option.companyShortName,
+                        })
                       }
                     />
                   )}
