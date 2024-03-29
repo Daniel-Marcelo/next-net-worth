@@ -33,11 +33,12 @@ export default async function handler(
       const updatedHoldings: Holding[] = [];
 
       for await (const holding of holdings) {
-        const summaryProfile = await financeApi.getSummaryProfile(
-          holding.symbol
-        );
+        console.log("Getting all modules for ", holding.symbol);
+        const allModules = await financeApi.getAllModules(holding.symbol);
         const quote = await financeApi.getQuote(holding.symbol);
-        const site = await getWebsiteFromSummaryProfile(summaryProfile);
+        const site = await getWebsiteFromSummaryProfile(
+          allModules.summaryProfile
+        );
         updatedHoldings.push({
           id: holding.id,
           symbol: holding.symbol,
@@ -45,6 +46,21 @@ export default async function handler(
           quantity: +holding.quantity,
           price: quote.regularMarketPrice,
           site: site ?? "",
+          dividendData: {
+            rate: allModules.summaryDetail?.dividendRate,
+            yield: allModules.summaryDetail?.dividendYield,
+            exDividendDate:
+              allModules.summaryDetail?.exDividendDate?.toISOString(),
+            dividendDate: allModules.summaryDetail?.dividendDate?.toISOString(),
+            fiveYearAvgDividendYield:
+              allModules.summaryDetail?.fiveYearAvgDividendYield,
+            trailingAnnualRate:
+              allModules.summaryDetail?.trailingAnnualDividendRate,
+            trailingAnnualYield:
+              allModules.summaryDetail?.trailingAnnualDividendYield,
+            lastDividendValue: allModules.summaryDetail?.lastDividendValue,
+            lastDividendDate: allModules.summaryDetail?.lastDividendDate,
+          },
         });
       }
       res.status(200).json(updatedHoldings);

@@ -1,3 +1,15 @@
+export type DividendData = {
+  rate?: number;
+  yield?: number;
+  exDividendDate?: string;
+  dividendDate?: string;
+  fiveYearAvgDividendYield?: number;
+  trailingAnnualRate?: number;
+  trailingAnnualYield?: number;
+  lastDividendValue?: number;
+  lastDividendDate?: string;
+};
+
 export type Holding = {
   id: string;
   name: string;
@@ -5,4 +17,5 @@ export type Holding = {
   quantity: number;
   price?: number;
   site: string;
+  dividendData: DividendData;
 };

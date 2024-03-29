@@ -33,6 +33,7 @@
     "node": ">=18"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.0",
     "@types/node": "20.10.6",
     "@types/react": "18.2.46",
     "prisma": "^5.10.2",
