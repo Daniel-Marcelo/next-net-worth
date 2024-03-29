@@ -22,6 +22,7 @@ import {
 } from "../../const/routes.constants";
 import { useSession } from "next-auth/react";
 import SearchIcon from "@mui/icons-material/Search";
+import isNil from "lodash/isNil";
 
 export function FixedBottomNavigation() {
   const { data: session } = useSession();
@@ -38,7 +39,7 @@ export function FixedBottomNavigation() {
   }, [value]);
 
   const onChange = (newValue: number | undefined) => {
-    const route = newValue ? NavIndexToRoute.get(newValue) : undefined;
+    const route = isNil(newValue) ? undefined : NavIndexToRoute.get(newValue);
 
     if (route) router.replace(route);
   };
