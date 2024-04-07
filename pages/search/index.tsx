@@ -36,10 +36,12 @@ function Page() {
   });
 
   const deleteHoldingMutation = useMutation({
-    mutationFn: (symbol: string) => axios.delete("/api/holdings"),
+    mutationFn: (id: string) => axios.delete("/api/holdings/" + id),
   });
 
   const holdings = getHoldingsQuery?.data ?? [];
+  const getHolding = (symbol: string) =>
+    holdings.find((holding) => holding.symbol === symbol);
   console.log(holdings);
 
   return (
@@ -62,9 +64,7 @@ function Page() {
             <ListItem
               secondaryAction={
                 <>
-                  {!holdings.some(
-                    (holding) => holding.symbol === option.tickerSymbol
-                  ) ? (
+                  {!getHolding(option.tickerSymbol) ? (
                     <AddCircle
                       color="primary"
                       sx={{ cursor: "pointer" }}
@@ -80,10 +80,9 @@ function Page() {
                       color="error"
                       sx={{ cursor: "pointer" }}
                       onClick={() =>
-                        addHoldingMutation.mutate({
-                          symbol: option.tickerSymbol,
-                          name: option.companyShortName,
-                        })
+                        deleteHoldingMutation.mutate(
+                          getHolding(option.tickerSymbol)!.id
+                        )
                       }
                     />
                   )}

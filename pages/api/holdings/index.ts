@@ -9,6 +9,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Holding[] | void>
 ) {
+  console.log("in here");
+  console.log(req.method);
   if (req.method === "POST" && req.body.symbol) {
     const session = await getServerSession(req, res);
     if (session?.user?.email) {
@@ -64,6 +66,13 @@ export default async function handler(
         });
       }
       res.status(200).json(updatedHoldings);
+    }
+  } else if (req.method === "DELETE") {
+    console.log(req.body);
+    const id = req.body.id as string;
+    if (id) {
+      await prisma.holding.delete({ where: { id } });
+      res.status(200).json();
     }
   } else {
     res.status(405);

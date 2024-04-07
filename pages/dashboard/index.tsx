@@ -19,6 +19,9 @@ import { Holding } from "types/holding.types";
 import { PageLevelCircularProgress } from "components/PageLevelCircularProgress";
 import InfoIcon from "@mui/icons-material/Info";
 import React from "react";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 const currencyFormatter = new Intl.NumberFormat("en-GB", {
   style: "currency",
@@ -41,6 +44,16 @@ function Page() {
     (sum, holding) => sum + currentValuation(holding),
     0
   );
+
+  const deleteHoldingMutation = useMutation({
+    mutationFn: (id: string) =>
+      axios.delete("/api/holdings/", { data: { id } }),
+  });
+
+  const onClickDelete = async (id: string) => {
+    await deleteHoldingMutation.mutateAsync(id);
+    await getHoldingsQuery.refetch();
+  };
 
   if (getHoldingsQuery.isFetching) return <PageLevelCircularProgress />;
 
@@ -80,7 +93,15 @@ function Page() {
       {!!holdings.length && !getHoldingsQuery.isFetching && (
         <List sx={{ width: "100%" }}>
           {holdings.map((holding) => (
-            <ListItem>
+            <ListItem
+              secondaryAction={
+                <RemoveCircleIcon
+                  color="error"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => onClickDelete(holding.id)}
+                />
+              }
+            >
               {holding.site ? (
                 <x.img
                   loading="lazy"
