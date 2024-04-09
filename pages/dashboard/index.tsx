@@ -22,6 +22,7 @@ import React from "react";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 const currencyFormatter = new Intl.NumberFormat("en-GB", {
   style: "currency",
@@ -32,6 +33,7 @@ const currencyFormatter = new Intl.NumberFormat("en-GB", {
 
 function Page() {
   const [open, setOpen] = React.useState(false);
+  const router = useRouter();
   const getHoldingsQuery = useQueryGetHoldings();
   const holdings = getHoldingsQuery.data ?? [];
 
@@ -94,6 +96,8 @@ function Page() {
         <List sx={{ width: "100%" }}>
           {holdings.map((holding) => (
             <ListItem
+              sx={{ cursor: "pointer" }}
+              onClick={() => router.push(`add-ticker/${holding.symbol}`)}
               secondaryAction={
                 <RemoveCircleIcon
                   color="error"

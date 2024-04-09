@@ -41,7 +41,7 @@ export function FixedBottomNavigation() {
   const onChange = (newValue: number | undefined) => {
     const route = isNil(newValue) ? undefined : NavIndexToRoute.get(newValue);
 
-    if (route) router.replace(route);
+    if (route) router.push(route);
   };
 
   if (!session) return <></>;
