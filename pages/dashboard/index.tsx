@@ -102,7 +102,11 @@ function Page() {
                 <RemoveCircleIcon
                   color="error"
                   sx={{ cursor: "pointer" }}
-                  onClick={() => onClickDelete(holding.id)}
+                  onClick={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onClickDelete(holding.id);
+                  }}
                 />
               }
             >
