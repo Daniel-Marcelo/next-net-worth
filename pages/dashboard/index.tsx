@@ -147,10 +147,7 @@ function Page() {
   );
 }
 
-export async function getServerSideProps(props) {
-  const res = await yahooFinance.quoteSummary("AAPL", {
-    modules: ["assetProfile"],
-  });
-  return { props: { data: JSON.parse(JSON.stringify(res)) } };
+export async function getServerSideProps() {
+  return { props: { data: {} } };
 }
 export default withProtection(Page);
