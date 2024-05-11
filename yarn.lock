@@ -1339,10 +1339,10 @@ xtend@^4.0.0:
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
   integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
 
-yahoo-finance2@^2.9.0:
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/yahoo-finance2/-/yahoo-finance2-2.9.0.tgz#7842580de36606197f7d64897dd2e5e55b9371d3"
-  integrity sha512-Q1UhB5uA0Uj2bBcSDqsZLt0tCxoHwrWCuvu4NMUgioyN8dlpq8ppbdKhZlzTD9ipIyKSgqG5TT7IlwB1x6eHZA==
+yahoo-finance2@^2.11.2:
+  version "2.11.2"
+  resolved "https://registry.yarnpkg.com/yahoo-finance2/-/yahoo-finance2-2.11.2.tgz#44f35105a2500fd1da22ac4f4393106f2bfec6d1"
+  integrity sha512-S5lHKqneMXMKN/rxowqErEfkvXJE6s/SPuekT7UkOVbsSyRcptea/U3Mud+ikOEXEbKXPiZrU0Jy+iF51ITuSw==
   dependencies:
     "@types/tough-cookie" "^4.0.2"
     ajv "8.10.0"
