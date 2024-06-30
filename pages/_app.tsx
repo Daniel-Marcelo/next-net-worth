@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { SessionProvider } from "next-auth/react";
 
 import { FixedBottomNavigation } from "../components/BottomNav/BottomNav";
+import { logger } from "utils/logger";
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -31,8 +32,7 @@ export default function MyApp({
       "message",
       (nativeEvent) => {
         alert("Message received from React Native1");
-        console.log("Inside event", nativeEvent);
-        alert("Message received from React Native2");
+        logger("Inside event");
         // if (nativeEvent.source) {
         setA(new Set([...a, JSON.stringify(nativeEvent.data)]));
         // }
