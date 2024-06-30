@@ -42,7 +42,6 @@ function Page() {
   const holdings = getHoldingsQuery?.data ?? [];
   const getHolding = (symbol: string) =>
     holdings.find((holding) => holding.symbol === symbol);
-  console.log(holdings);
 
   return (
     <Box
