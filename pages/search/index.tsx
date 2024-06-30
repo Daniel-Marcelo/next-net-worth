@@ -55,7 +55,10 @@ function Page() {
       <TextField
         label="Search for a ticker"
         variant="filled"
-        onChange={onChangeSearchText}
+        onChange={(event) => {
+          console.log(event.target.value);
+          yahooFinance.search(event.target.value);
+        }}
         fullWidth
       />
       {!!options?.length && !query.isFetching && (
@@ -155,4 +158,4 @@ function Page() {
 export async function getServerSideProps() {
   return { props: { data: {} } };
 }
-export default withProtection(Page);
+export default Page;
