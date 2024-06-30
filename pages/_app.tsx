@@ -43,7 +43,9 @@ export default function MyApp({
 
   // method to send msg to react native
   const sendMessage = () => {
-    (window as any)?.ReactNativeWebView.postMessage({ message: "Hi from PWA" });
+    (window as any)?.ReactNativeWebView.postMessage(
+      JSON.stringify({ message: "Hi from PWA" })
+    );
   };
   // Instead do this, which ensures each request has its own cache:
   const [queryClient] = useState(
