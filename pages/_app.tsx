@@ -33,9 +33,7 @@ export default function MyApp({
       (nativeEvent) => {
         alert("Message received from React Native1");
         logger("Inside event");
-        // if (nativeEvent.source) {
         setA(new Set([...a, JSON.stringify(nativeEvent.data)]));
-        // }
       }
     );
     return messageListener;

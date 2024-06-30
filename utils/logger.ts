@@ -1,2 +1,2 @@
-export const logger = (...message: any[]) =>
-  console.log("CONSOLE.LOG", ...message);
+export const logger = (message: string) =>
+  console.log("CONSOLE.LOG " + message);
