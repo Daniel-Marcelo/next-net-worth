@@ -30,7 +30,9 @@ export default function MyApp({
     const messageListener = window.addEventListener(
       "message",
       (nativeEvent) => {
-        console.log(nativeEvent?.data);
+        alert("Message received from React Native1");
+        console.log(nativeEvent);
+        alert("Message received from React Native2");
         // if (nativeEvent.source) {
         setA(new Set([...a, JSON.stringify(nativeEvent.data)]));
         // }
