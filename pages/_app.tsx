@@ -31,9 +31,9 @@ export default function MyApp({
       "message",
       (nativeEvent) => {
         console.log(nativeEvent?.data);
-        if (nativeEvent.source) {
-          setA(new Set([...a, nativeEvent.data.source]));
-        }
+        // if (nativeEvent.source) {
+        setA(new Set([...a, JSON.stringify(nativeEvent.data)]));
+        // }
       }
     );
     return messageListener;
