@@ -31,7 +31,7 @@ export default function MyApp({
       "message",
       (nativeEvent) => {
         alert("Message received from React Native1");
-        console.log(nativeEvent);
+        console.log("Inside event", nativeEvent);
         alert("Message received from React Native2");
         // if (nativeEvent.source) {
         setA(new Set([...a, JSON.stringify(nativeEvent.data)]));
@@ -43,7 +43,7 @@ export default function MyApp({
 
   // method to send msg to react native
   const sendMessage = () => {
-    (window as any)?.ReactNativeWebView.postMessage("Hi from PWA");
+    (window as any)?.ReactNativeWebView.postMessage({ message: "Hi from PWA" });
   };
   // Instead do this, which ensures each request has its own cache:
   const [queryClient] = useState(
