@@ -54,10 +54,7 @@ function Page() {
       <TextField
         label="Search for a ticker"
         variant="filled"
-        onChange={(event) => {
-          console.log(event.target.value);
-          yahooFinance.search(event.target.value);
-        }}
+        onChange={onChangeSearchText}
         fullWidth
       />
       {!!options?.length && !query.isFetching && (
