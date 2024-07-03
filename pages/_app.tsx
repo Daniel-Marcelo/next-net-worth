@@ -31,7 +31,6 @@ export default function MyApp({
     const messageListener = window.addEventListener(
       "message",
       (nativeEvent) => {
-        alert("Message received from React Native1");
         logger("Inside event");
         setA(new Set([...a, JSON.stringify(nativeEvent.data)]));
       }
@@ -61,10 +60,10 @@ export default function MyApp({
 
   return (
     <SessionProvider session={session}>
-      <button onClick={sendMessage}>{` Say Hi`}</button>
+      {/* <button onClick={sendMessage}>{` Say Hi`}</button>
       {Array.from(a).map((source) => (
         <div>{source as any}</div>
-      ))}
+      ))} */}
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary state={pageProps.dehydratedState}>
           <ThemeProvider theme={darkTheme}>
