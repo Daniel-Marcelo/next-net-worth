@@ -26,7 +26,7 @@
     "react-hook-form": "^7.49.2",
     "react-social-login-buttons": "^3.9.1",
     "styled-components": "^6.1.8",
-    "yahoo-finance2": "^2.11.2"
+    "yahoo-finance2": "2.11.3"
   },
   "engines": {
     "node": ">=18"

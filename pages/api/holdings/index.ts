@@ -36,7 +36,11 @@ export default async function handler(
 
       for await (const holding of holdings) {
         console.log("Getting all modules for ", holding.symbol);
-        const allModules = await financeApi.getAllModules(holding.symbol);
+        const allModules = await financeApi.getModules(
+          holding.symbol,
+          "summaryDetail",
+          "summaryProfile"
+        );
         const quote = await financeApi.getQuote(holding.symbol);
         const site = await getWebsiteFromSummaryProfile(
           allModules.summaryProfile
